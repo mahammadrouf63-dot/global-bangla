@@ -1,9 +1,3 @@
-<<<<<<< HEAD
-node_modules
-.env
-/uploads/**/*.tmp
-npm-debug.log*
-=======
 # Logs
 logs
 *.log
@@ -143,4 +137,6 @@ dist
 # Vite logs files
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
->>>>>>> 2082c9c4913a047f98b67c92984f3773cdb2ead2
+
+# Uploads temporary files
+/uploads/**/*.tmp
