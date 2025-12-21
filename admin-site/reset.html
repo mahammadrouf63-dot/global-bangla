@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Password Reset | Global Bangla</title>
+  <link rel="stylesheet" href="/admin/admin-assets/css/style.css">
+</head>
+
+<body class="auth-body">
+  <main class="auth-container">
+    <section class="auth-panel">
+      <h1>Reset Admin Password</h1>
+      <p>Choose a new secure password for your admin account.</p>
+      <form id="resetForm" class="auth-form">
+        <label>
+          New password
+          <input type="password" name="password" minlength="8" required>
+        </label>
+        <button class="primary-btn" type="submit">Update password</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById('resetForm');
+    const token = new URLSearchParams(window.location.search).get('token');
+    if (!token) alert('Invalid token');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      try {
+        const res = await fetch('/api/auth/reset-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, password: form.password.value })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message);
+        alert('Password updated. You may login now.');
+        window.location.href = '/admin/index.html';
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+  </script>
+</body>
+
+</html>

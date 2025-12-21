@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Global Bangla student dashboard" />
+  <title>Global Bangla | Student Dashboard</title>
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <link rel="stylesheet" href="/user/user-assets/css/style.css" />
+</head>
+
+<body class="dashboard">
+  <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <div class="menu-overlay" id="menuOverlay"></div>
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h2>Global Bangla</h2>
+        <p>Student Portal</p>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" data-target="overview">Overview</button>
+        <button class="nav-btn" data-target="competitions">Competitions</button>
+        <button class="nav-btn" data-target="submissions">Submissions</button>
+        <button class="nav-btn" data-target="results">Results</button>
+        <button class="nav-btn" data-target="about">About</button>
+        <button class="nav-btn" data-target="profile">Profile</button>
+        <button class="nav-btn" data-target="affiliate">Affiliate School</button>
+      </nav>
+      <footer>
+        <button id="logoutBtn" class="primary-btn" style="width:100%;border-radius:12px;">Logout</button>
+        <p>Support: hello@globalbangla.com</p>
+      </footer>
+    </aside>
+
+    <main class="main">
+      <header class="app-bar">
+        <div>
+          <p class="eyebrow">Global Bangla</p>
+          <h2>Student HQ</h2>
+        </div>
+        <div class="app-actions">
+          <button class="icon-btn" id="refreshDashboard" aria-label="Refresh dashboard">
+            <span>↻</span>
+          </button>
+          <button class="icon-btn" id="openSupport" aria-label="Open support chat">
+            <span>?</span>
+          </button>
+          <button class="profile-chip" id="profileChip" aria-label="Open profile">
+            <img id="profileChipImage" src="/user/user-assets/img/avatar.svg" alt="Profile thumb" />
+            <span id="profileChipName">You</span>
+          </button>
+        </div>
+      </header>
+
+      <section class="hero" id="overview">
+        <div class="hero-head">
+          <div class="hero-info">
+            <p class="eyebrow">Student overview</p>
+            <h1 id="studentName">Namaste, Changemaker!</h1>
+            <p class="hero-copy">Stay on top of every competition, payment, and WhatsApp submission from one clean mobile hub.</p>
+            <div class="meta-row">
+              <span id="studentEmail"></span>
+              <span id="studentSchool"></span>
+            </div>
+          </div>
+          <div class="hero-profile">
+            <img id="profilePicture" src="/user/user-assets/img/avatar.svg" alt="Profile" />
+            <button class="primary-btn ghost" id="uploadProfileBtn">Update</button>
+            <div class="hero-badges">
+              <span class="badge live">Ready to submit</span>
+              <span class="badge secure">Verified</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-stats">
+          <article class="hero-stat">
+            <p class="label">Competitions</p>
+            <strong id="statCompetitions">0</strong>
+            <small>live events</small>
+          </article>
+          <article class="hero-stat">
+            <p class="label">Submissions</p>
+            <strong id="statSubmissions">0</strong>
+            <small>sent to jury</small>
+          </article>
+          <article class="hero-stat">
+            <p class="label">Wins</p>
+            <strong id="statWins">0</strong>
+            <small>featured moments</small>
+          </article>
+        </div>
+      </section>
+
+      <section class="section hidden" id="aboutSection">
+        <h3>About Global Bangla</h3>
+        <p id="aboutContent">Loading...</p>
+      </section>
+
+      <section class="section" id="competitionsSection">
+        <div class="section-head">
+          <h3>Live Competitions</h3>
+          <p class="section-subtitle">Join an event, finish payment (if required), then share your hero video via WhatsApp.</p>
+        </div>
+        <div class="competition-steps">
+          <article class="step-card">
+            <span>01</span>
+            <div>
+              <h4>Explore & join</h4>
+              <p>Tap an event to view the brief and lock your slot.</p>
+            </div>
+          </article>
+          <article class="step-card">
+            <span>02</span>
+            <div>
+              <h4>Pay (if needed)</h4>
+              <p>Instant confirmation for paid tracks so you never miss a deadline.</p>
+            </div>
+          </article>
+          <article class="step-card">
+            <span>03</span>
+            <div>
+              <h4>Submit video on WhatsApp</h4>
+              <p>Send the clip + student email directly to the jury team.</p>
+            </div>
+          </article>
+        </div>
+        <div class="grid competitions-grid" id="competitionsGrid"></div>
+      </section>
+
+      <section class="section hidden" id="submissionsSection">
+        <h3>Your submissions</h3>
+        <table class="table" id="submissionsTable">
+          <thead>
+            <tr>
+              <th>Competition</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section class="section hidden" id="resultsSection">
+        <h3>Winning Gallery</h3>
+        <div class="winners-marquee" id="winnersMarquee"></div>
+      </section>
+
+      <section class="section hidden" id="profileSection">
+        <h3>Profile Settings</h3>
+        <form id="profileForm" class="form-grid">
+          <label>
+            Full name
+            <input type="text" name="name" placeholder="Your name" />
+          </label>
+          <label>
+            School
+            <input type="text" name="school" placeholder="School name" />
+          </label>
+          <label>
+            Affiliate school
+            <input type="text" name="affiliateSchool" placeholder="Partner school" />
+          </label>
+          <button type="submit" class="primary-btn">Save profile</button>
+        </form>
+      </section>
+
+      <section class="section hidden" id="affiliateSection">
+        <h3>Affiliate School Program</h3>
+        <p id="affiliateContent">Loading...</p>
+        <button class="primary-btn" id="joinAffiliateBtn">Join affiliate network</button>
+      </section>
+
+      <section class="section hidden" id="submissionFormSection">
+        <h3>WhatsApp Submission Hub</h3>
+        <p class="section-subtitle">Keep it mobile-first: record, trim, and send your highlight clip straight from your phone.</p>
+        <div class="whatsapp-guide">
+          <h4>One-click WhatsApp</h4>
+          <p id="whatsappNote">Select a competition to unlock the submission button.</p>
+          <div id="whatsappCTA" class="whatsapp-cta hidden">
+            <div>
+              <p class="cta-title">Ready to submit?</p>
+              <p class="cta-copy">Tap the button, attach your video (max 200MB), and include your registered email + school.</p>
+            </div>
+            <button type="button" class="primary-btn" id="whatsappButton">Open WhatsApp</button>
+          </div>
+        </div>
+        <ul class="mobile-checklist">
+          <li>Film vertically or square for best mobile playback.</li>
+          <li>Name your file with <strong>StudentName-Competition</strong>.</li>
+          <li>Share any drive link if the file is larger than 200MB.</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+  <nav class="bottom-nav" id="bottomNav">
+    <button class="nav-pill nav-btn active" data-target="overview">
+      <span>Overview</span>
+    </button>
+    <button class="nav-pill nav-btn" data-target="competitions">
+      <span>Competitions</span>
+    </button>
+    <button class="nav-pill nav-btn" data-target="submissions">
+      <span>Submissions</span>
+    </button>
+    <button class="nav-pill nav-btn" data-target="profile">
+      <span>Profile</span>
+    </button>
+  </nav>
+
+  <script src="/user/user-assets/js/dashboard.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reset Password | Global Bangla</title>
+  <link rel="stylesheet" href="/user/user-assets/css/style.css">
+</head>
+
+<body class="auth-body">
+  <main class="auth-container">
+    <section class="auth-panel">
+      <h1>Reset Password</h1>
+      <p>Enter your new password below.</p>
+      <form id="resetForm" class="auth-form">
+        <label>
+          New password
+          <input type="password" name="password" minlength="6" required>
+        </label>
+        <button class="primary-btn" type="submit">Update password</button>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token');
+    const form = document.getElementById('resetForm');
+
+    if (!token) {
+      alert('Invalid reset link.');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const password = form.password.value;
+      try {
+        const res = await fetch('/api/auth/reset-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token, password })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.message);
+        alert('Password updated. Login again.');
+        window.location.href = '/';
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+  </script>
+</body>
+
+</html>

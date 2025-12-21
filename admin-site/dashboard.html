@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global Bangla Admin Dashboard</title>
+  <link rel="stylesheet" href="/admin/admin-assets/css/style.css">
+</head>
+
+<body>
+  <div class="admin-layout">
+    <aside class="admin-sidebar">
+      <h2>Global Bangla</h2>
+      <p>Admin Console</p>
+      <nav class="sidebar-nav">
+        <button class="nav-btn active" data-target="overviewSection">Overview</button>
+        <button class="nav-btn" data-target="competitionSection">Competitions</button>
+        <button class="nav-btn" data-target="submissionSection">Submissions</button>
+        <button class="nav-btn" data-target="winnerSection">Winners</button>
+        <button class="nav-btn" data-target="studentSection">Students</button>
+        <button class="nav-btn" data-target="paymentSection">Payments</button>
+        <button class="nav-btn" data-target="settingsSection">Settings</button>
+      </nav>
+      <button id="adminLogoutBtn" class="primary-btn" style="width:100%; border-radius:12px;">Logout</button>
+    </aside>
+
+    <main class="admin-main">
+      <section class="card" id="overviewSection">
+        <div class="section-title">
+          <h3>Quick stats</h3>
+          <small>Live snapshot</small>
+        </div>
+        <div class="stats-grid" id="statsGrid"></div>
+        <div class="card" style="margin-top:1.5rem;">
+          <h3>Recent submissions</h3>
+          <table class="table" id="latestSubmissions">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Competition</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="card hidden" id="competitionSection">
+        <div class="section-title">
+          <h3>Competitions</h3>
+          <button id="newCompetitionBtn" class="primary-btn">Create new</button>
+        </div>
+        <div id="competitionList"></div>
+        <form id="competitionForm" class="hidden" enctype="multipart/form-data">
+          <h4 id="competitionFormTitle">New competition</h4>
+          <label>Title
+            <input type="text" name="title" required>
+          </label>
+          <label>Description
+            <textarea name="description"></textarea>
+          </label>
+          <label>Paid competition?
+            <select name="isPaid">
+              <option value="false">Free</option>
+              <option value="true">Paid</option>
+            </select>
+          </label>
+          <label>Fee (₹)
+            <input type="number" name="fee" step="0.01" min="0">
+          </label>
+          <label>WhatsApp Link
+            <input type="url" name="whatsappLink">
+          </label>
+          <label>Status
+            <select name="status">
+              <option value="draft">Draft</option>
+              <option value="active">Active</option>
+              <option value="closed">Closed</option>
+            </select>
+          </label>
+          <label>Start Date
+            <input type="date" name="startDate">
+          </label>
+          <label>End Date
+            <input type="date" name="endDate">
+          </label>
+          <label>Thumbnail
+            <input type="file" name="thumbnail" accept="image/*">
+          </label>
+          <button class="primary-btn" type="submit">Save</button>
+        </form>
+      </section>
+
+      <section class="card hidden" id="submissionSection">
+        <h3>All submissions</h3>
+        <table class="table" id="submissionTable">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Email</th>
+              <th>Competition</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section class="card hidden" id="winnerSection">
+        <div class="section-title">
+          <h3>Winner gallery</h3>
+          <button id="newWinnerBtn" class="primary-btn">Add winner</button>
+        </div>
+        <div class="grid" id="winnersGrid"></div>
+        <form id="winnerForm" class="hidden" enctype="multipart/form-data">
+          <label>Student Name
+            <input type="text" name="studentName" required>
+          </label>
+          <label>School
+            <input type="text" name="school">
+          </label>
+          <label>Competition ID
+            <input type="number" name="competitionId">
+          </label>
+          <label>Highlight
+            <textarea name="highlightText"></textarea>
+          </label>
+          <label>Image
+            <input type="file" name="media" accept="image/*" required>
+          </label>
+          <button class="primary-btn" type="submit">Save winner</button>
+        </form>
+      </section>
+
+      <section class="card hidden" id="studentSection">
+        <h3>Students</h3>
+        <table class="table" id="studentTable">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>School</th>
+              <th>Joined</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section class="card hidden" id="paymentSection">
+        <h3>Payments</h3>
+        <table class="table" id="paymentTable">
+          <thead>
+            <tr>
+              <th>Student</th>
+              <th>Competition</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <section class="card hidden" id="settingsSection">
+        <h3>Site Settings</h3>
+        <form id="settingsForm" enctype="multipart/form-data">
+          <label>Affiliate text
+            <textarea name="affiliateText"></textarea>
+          </label>
+          <label>About content
+            <textarea name="aboutContent"></textarea>
+          </label>
+          <label>Logo
+            <input type="file" name="logo" accept="image/*">
+          </label>
+          <button class="primary-btn" type="submit">Update settings</button>
+        </form>
+        <form id="featureForm" style="margin-top:1.5rem;">
+          <label>
+            Feature key
+            <input type="text" name="key" placeholder="futureFeatureEnabled">
+          </label>
+          <label>
+            Enabled
+            <select name="enabled">
+              <option value="true">Enable</option>
+              <option value="false">Disable</option>
+            </select>
+          </label>
+          <button class="primary-btn" type="submit">Toggle feature</button>
+        </form>
+      </section>
+    </main>
+  </div>
+
+  <script src="/admin/admin-assets/js/dashboard.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thumbnail Debug Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-card { border: 1px solid #ccc; margin: 10px 0; padding: 15px; border-radius: 8px; }
+        .test-image { max-width: 200px; height: auto; display: block; margin: 10px 0; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Competition Thumbnail Debug Test</h1>
+    
+    <div class="test-card">
+        <h2>Direct Image Test</h2>
+        <p>Testing if thumbnail images load directly:</p>
+        <img src="/uploads/competitions/competitions-54af47b5-6fb6-488d-8fab-96a3d9d8981d.webp" 
+             alt="Test Thumbnail 1" class="test-image" 
+             onload="this.nextElementSibling.innerHTML='<span class=success>✓ Image 1 loaded successfully</span>'"
+             onerror="this.nextElementSibling.innerHTML='<span class=error>✗ Image 1 failed to load</span>'">
+        <div></div>
+        
+        <img src="/uploads/competitions/competitions-a286bb22-d2be-4ff6-9cf7-5cd4411488f8.jpg" 
+             alt="Test Thumbnail 2" class="test-image"
+             onload="this.nextElementSibling.innerHTML='<span class=success>✓ Image 2 loaded successfully</span>'"
+             onerror="this.nextElementSibling.innerHTML='<span class=error>✗ Image 2 failed to load</span>'">
+        <div></div>
+    </div>
+    
+    <div class="test-card">
+        <h2>API Test</h2>
+        <button onclick="testAPI()">Test Competitions API</button>
+        <div id="apiResult"></div>
+    </div>
+    
+    <div class="test-card">
+        <h2>Rendered Competition Test</h2>
+        <div id="renderedCompetition"></div>
+    </div>
+    
+    <script>
+        async function testAPI() {
+            const resultDiv = document.getElementById('apiResult');
+            try {
+                console.log('Testing API...');
+                const response = await fetch('/api/user/competitions', {
+                    credentials: 'include'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('API returned ' + response.status);
+                }
+                
+                const competitions = await response.json();
+                console.log('API Response:', competitions);
+                
+                resultDiv.innerHTML = `
+                    <p><span class="success">✓ API loaded successfully</span></p>
+                    <p>Found ${competitions.length} competitions</p>
+                    <pre>${JSON.stringify(competitions[0], null, 2)}</pre>
+                `;
+                
+                // Test rendering first competition
+                if (competitions.length > 0) {
+                    renderCompetition(competitions[0]);
+                }
+                
+            } catch (error) {
+                console.error('API Error:', error);
+                resultDiv.innerHTML = `<p><span class="error">✗ API Error: ${error.message}</span></p>`;
+            }
+        }
+        
+        function renderCompetition(comp) {
+            const renderDiv = document.getElementById('renderedCompetition');
+            renderDiv.innerHTML = `
+                <h3>Rendered Competition Card</h3>
+                <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; max-width: 400px;">
+                    ${comp.thumbnail ? `
+                        <div style="position: relative; margin-bottom: 10px;">
+                            <img src="${comp.thumbnail}" 
+                                 alt="${comp.title}" 
+                                 style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px;"
+                                 onload="this.nextElementSibling.innerHTML='<span class=success>✓ Thumbnail loaded in card</span>'"
+                                 onerror="this.nextElementSibling.innerHTML='<span class=error>✗ Thumbnail failed in card</span>'">
+                            <div></div>
+                        </div>
+                    ` : '<p><span class="error">No thumbnail path</span></p>'}
+                    <h4>${comp.title}</h4>
+                    <p>${comp.description || 'No description'}</p>
+                    <p><strong>Thumbnail Path:</strong> ${comp.thumbnail}</p>
+                </div>
+            `;
+        }
+        
+        // Auto-run API test on page load
+        window.addEventListener('load', () => {
+            setTimeout(testAPI, 1000);
+        });
+    </script>
+</body>
+</html>
