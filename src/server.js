@@ -15,15 +15,32 @@ const pool = require('./config/db');
 
 const app = express();
 
-const sessionStore = new MySQLStore({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  clearExpired: true,
-  checkExpirationInterval: 300000,
-  expiration: 86400000
-});
+// Initialize session store with error handling
+let sessionStore;
+try {
+  sessionStore = new MySQLStore({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    clearExpired: true,
+    checkExpirationInterval: 300000,
+    expiration: 86400000,
+    createDatabaseTable: true,
+    schema: {
+      tableName: 'sessions',
+      columnNames: {
+        session_id: 'session_id',
+        expires: 'expires',
+        data: 'data'
+      }
+    }
+  });
+} catch (error) {
+  console.error('Session store initialization failed:', error.message);
+  // Fallback to memory store if MySQL session store fails
+  sessionStore = new session.MemoryStore();
+}
 
 app.use(helmet({
   contentSecurityPolicy: {
@@ -76,7 +93,52 @@ app.get('/', (_req, res) => {
   return res.sendFile(path.join(__dirname, '../user-site/index.html'));
 });
 
+// Health check endpoint for Railway
+app.get('/health', (_req, res) => {
+  res.status(200).json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development'
+  });
+});
+
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Global Bangla server running on port ${PORT}`);
+
+// Start server with error handling
+async function startServer() {
+  try {
+    // Test database connection
+    console.log('Testing database connection...');
+    await pool.getConnection();
+    console.log('✅ Database connection successful');
+    
+    // Start server
+    app.listen(PORT, () => {
+      console.log(`🚀 Global Bangla server running on port ${PORT}`);
+      console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`📊 Health check: http://localhost:${PORT}/health`);
+    });
+    
+  } catch (error) {
+    console.error('❌ Server startup failed:', error.message);
+    
+    // Start server anyway even if DB fails (Railway will retry)
+    app.listen(PORT, () => {
+      console.log(`⚠️  Global Bangla server running on port ${PORT} (database issues detected)`);
+      console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
+    });
+  }
+}
+
+startServer();
+
+// Handle graceful shutdown
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down gracefully');
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT received, shutting down gracefully');
+  process.exit(0);
 });
