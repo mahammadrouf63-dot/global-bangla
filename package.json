@@ -1,12 +1,10 @@
 {
-  "name": "global-bangla-new",
+  "name": "global-bangla",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/server.js",
   "scripts": {
-    "dev": "nodemon src/server.js",
-    "start": "node src/server.js",
-    "build": "echo 'Build completed'"
+    "start": "node src/server.js"
   },
   "keywords": [],
   "author": "",
