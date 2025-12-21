@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ## Global Bangla Competition Platform
 
 Full-stack Node.js + MySQL application that powers a student competition portal along with an admin console.
@@ -33,3 +34,7 @@ Full-stack Node.js + MySQL application that powers a student competition portal 
   INSERT INTO users (name, email, password_hash, role)
   VALUES ('Admin', 'admin@example.com', '<bcrypt_hash>', 'admin');
   ```
+=======
+# global-bangla
+Global Bangla is  competition site  here  is  you  join hand writing  competiton  , quiz competiton , eassy writing etc thanj you.......
+>>>>>>> 2082c9c4913a047f98b67c92984f3773cdb2ead2
