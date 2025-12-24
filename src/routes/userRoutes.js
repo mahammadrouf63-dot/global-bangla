@@ -1,13 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-const {
-  ensureAuthenticated
-} = require('../middleware/authMiddleware');
-const {
-  uploadSubmission,
-  uploadProfile
-} = require('../middleware/uploadMiddleware');
+const { ensureAuthenticated } = require('../middleware/authMiddleware');
+const { uploadSubmission, uploadProfile } = require('../middleware/uploadMiddleware');
 const {
   getDashboard,
   getCompetitions,
@@ -21,10 +16,10 @@ const {
   verifyPayment
 } = require('../controllers/userController');
 
-const {
-  getSiteSettings
-} = require('../controllers/adminController');
+const { getSiteSettings } = require('../controllers/adminController');
+const db = require('../db'); // নিশ্চিত করো db.js আছে এবং exported properly
 
+// Authenticated routes
 router.get('/dashboard', ensureAuthenticated, getDashboard);
 router.get('/competitions', ensureAuthenticated, getCompetitions);
 router.get('/competitions/:id', ensureAuthenticated, getCompetition);
@@ -38,10 +33,10 @@ router.post('/profile/picture', ensureAuthenticated, uploadProfile.single('profi
 router.post('/payments/order', ensureAuthenticated, createPaymentOrder);
 router.post('/payments/verify', ensureAuthenticated, verifyPayment);
 
-// Public competitions endpoint (no authentication required)
+// Public routes
 router.get('/competitions-public', async (req, res) => {
   try {
-    const competitions = await query(
+    const [competitions] = await db.query(
       'SELECT id, title, description, is_paid, fee, whatsapp_link, thumbnail, status, start_date, end_date FROM competitions WHERE status = ? ORDER BY start_date DESC',
       ['active']
     );
@@ -52,7 +47,6 @@ router.get('/competitions-public', async (req, res) => {
   }
 });
 
-// Public site settings endpoint (no authentication required)
 router.get('/site-settings', getSiteSettings);
 
 module.exports = router;
