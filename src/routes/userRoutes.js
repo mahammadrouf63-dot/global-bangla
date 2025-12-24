@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
 
+// Middleware
 const { ensureAuthenticated } = require('../middleware/authMiddleware');
 const { uploadSubmission, uploadProfile } = require('../middleware/uploadMiddleware');
+
+// Controllers
 const {
   getDashboard,
   getCompetitions,
@@ -17,7 +20,9 @@ const {
 } = require('../controllers/userController');
 
 const { getSiteSettings } = require('../controllers/adminController');
-const db = require('../db'); // নিশ্চিত করো db.js আছে এবং exported properly
+
+// Database
+const db = require('../config/db'); // Correct path
 
 // Authenticated routes
 router.get('/dashboard', ensureAuthenticated, getDashboard);
