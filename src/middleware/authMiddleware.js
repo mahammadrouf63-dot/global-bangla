@@ -1,35 +1,31 @@
-const jwt = require('jsonwebtoken');
+const express = require('express');
+const router = express.Router();
+const {
+  signup,
+  login,
+  logout,
+  requestUserPasswordReset,
+  requestAdminPasswordReset,
+  resetPassword,
+  createAdminAccount
+} = require('../controllers/authController');
 
-// Middleware: protect user routes
-const ensureAuthenticated = (req, res, next) => {
-  const token = req.cookies.gb_token || req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ message: 'Authentication required' });
+const { ensureAuthenticated, ensureAdmin } = require('../middleware/authMiddleware'); // <-- ঠিক করা হলো
 
-  try {
-    req.user = jwt.verify(token, process.env.JWT_SECRET);
-    return next();
-  } catch (err) {
-    return res.status(401).json({ message: 'Invalid token' });
-  }
-};
+// Public routes
+router.post('/signup', signup);
+router.post('/login', login);
+router.post('/logout', logout); // Clears JWT cookie
+router.post('/user/forgot-password', requestUserPasswordReset);
+router.post('/admin/forgot-password', requestAdminPasswordReset);
+router.post('/reset-password', resetPassword);
 
-// Middleware: protect admin routes
-const ensureAdmin = (req, res, next) => {
-  const token = req.cookies.gb_token || req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).json({ message: 'Authentication required' });
+// Admin creation protected by invite code only (already handled in controller)
+router.post('/admin/create', createAdminAccount);
 
-  try {
-    req.user = jwt.verify(token, process.env.JWT_SECRET);
-    if (req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Admin privileges required' });
-    }
-    return next();
-  } catch (err) {
-    return res.status(401).json({ message: 'Invalid token' });
-  }
-};
+// Example of protected route usage:
+// router.get('/profile', ensureAuthenticated, (req, res) => {
+//   res.json({ user: req.user }); 
+// });
 
-module.exports = {
-  ensureAuthenticated,
-  ensureAdmin
-};
+module.exports = router;
